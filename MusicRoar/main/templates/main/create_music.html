@@ -1,0 +1,15 @@
+{% extends 'main/base.html' %}
+
+
+{% block title %}Upload Music{% endblock title %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}{{form|crispy}}
+        <button type="submit" class="button button-success">Upload</button>
+    </form>
+{% endblock content %}
+    
+    
