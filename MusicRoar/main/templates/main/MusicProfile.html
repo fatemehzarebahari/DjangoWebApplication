@@ -7,53 +7,57 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-       <div class="container mt-4">
-        <!-- audio section -->
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">{{ music.title }}</h5>
-                <audio controls class="mb-3">
-                    <source src="{{ music.audio_file.url }}" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-                <p class="card-text">Last updated: {{ music.updated_at }}</p>
-               {% if isLiked %}
-                    <div class="d-flex align-items-center">
-                        <a href="{% url 'like_music' music.id %}" class="btn btn-link">
-                            <img src="{% static 'filledHeart.jpg' %}" alt="Undo Like" style="width: 30px">
-                        </a><br>
-                        <p class="card-text small ms-2 mb-0">{{ numberOfLikes }}</p>
-                    </div>
-               {% else %}
-                    <div class="d-flex align-items-center">
-                        <a href="{% url 'like_music' music.id %}" class="btn btn-link">
-                            <img src="{% static 'emptyHeart.jpg' %}" alt="Like" style="width: 30px">
-                        </a><br>
-                        <p class="card-text small ms-2 mb-0">{{ numberOfLikes }}</p>
-                    </div>
-               {% endif %}
-            </div>
+<div class="container mt-4">
+    <!-- audio section -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ music.title }}</h5>
+            <audio controls class="mb-3">
+                <source src="{{ music.audio_file.url }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <p class="card-text">Last updated: {{ music.updated_at }}</p>
+           {% if isLiked %}
+                <div class="d-flex align-items-center">
+                    <a href="{% url 'like_music' music.id %}" class="btn btn-link">
+                        <img src="{% static 'filledHeart.jpg' %}" alt="Undo Like" style="width: 30px">
+                    </a><br>
+                    <p class="card-text small ms-2 mb-0">{{ numberOfLikes }}</p>
+                </div>
+           {% else %}
+                <div class="d-flex align-items-center">
+                    <a href="{% url 'like_music' music.id %}" class="btn btn-link">
+                        <img src="{% static 'emptyHeart.jpg' %}" alt="Like" style="width: 30px">
+                    </a><br>
+                    <p class="card-text small ms-2 mb-0">{{ numberOfLikes }}</p>
+                </div>
+           {% endif %}
         </div>
-
-        <!-- Comments section -->
-        <div class="mt-4">
-            <h5>Comments</h5>
-            {% if comments.count > 0 %}
-                {% for comment in comments %}
-                    <div class="card mt-2">
-                        <div class="card-body">
-                            <p class="card-text">{{ comment.text }}</p>
-                            <small class="text-muted">Posted by {{ comment.author.username }} on {{ comment.create_at }}</small>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                    <p>No comments yet....</p>
-            {% endif %}
-        </div>
-
-
     </div>
+
+    <!-- Comments section -->
+    <form method="post" class="text-light" action="{% url 'comment_music' music.id %}">
+        {% csrf_token %}{{ comment_form|crispy }}
+        <input type="submit" name="add_comment" value="Add Comment" class="button button-primary">
+    </form>
+
+    <div class="mt-4">
+        <h5>Comments</h5>
+        {% if comments.count > 0 %}
+            {% for comment in comments %}
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <p class="card-text">{{ comment.text }}</p>
+                        <small class="text-muted">Posted by {{ comment.author.username }} on {{ comment.create_at }}</small>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No comments yet.</p>
+        {% endif %}
+    </div>
+
+</div>
 {% endblock content %}
     
     
