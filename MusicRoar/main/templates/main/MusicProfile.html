@@ -8,6 +8,17 @@
 
 {% block content %}
 <div class="container mt-4">
+
+    <div class="mt-3">
+        {% if music.status != "accepted" %}
+        <h3 class="text-danger">status:{{music.status}}</h3>
+        {% endif %}
+        {% if user.is_staff %}
+        <a href="{% url 'decline-music' music.id %}"  class="btn btn-primary"  role="button"> Ban Music</a>
+        {% endif %}
+        <br><br>
+    </div>
+
     <!-- audio section -->
     <div class="card">
         <div class="card-body">
@@ -45,12 +56,34 @@
         <h5>Comments</h5>
         {% if comments.count > 0 %}
             {% for comment in comments %}
-                <div class="card mt-2">
-                    <div class="card-body">
-                        <p class="card-text">{{ comment.text }}</p>
-                        <small class="text-muted">Posted by {{ comment.author.username }} on {{ comment.create_at }}</small>
+                {% if comment.status == "accepted"%}
+                    <div class="card mt-2">
+                        <div class="card-body">
+                            <p class="card-text">{{ comment.text }}</p>
+                            <small class="text-muted">Posted by {{ comment.author.username }} on {{ comment.create_at }}</small>
+                            {% if user.is_staff %}
+                                <a href="{% url 'decline-comment' comment.id %}" class="btn btn-primary"  role="button">Ban Comment</a>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
+                {% else %}
+                    {% if user.is_staff or comment.author == user%}
+                        <div class="card mt-2">
+                            <div class="card-body">
+                                <p class="card-text">{{ comment.text }}</p>
+                                <small class="text-muted">Posted by {{ comment.author.username }} on {{ comment.create_at }}</small>
+                            <div class="card-footer text-danger"><strong>{{ comment.status }}</strong></div>
+                            {% if user.is_staff %}
+                                {% if comment.status == "pending" %}
+                                    <a href="{% url 'accept-comment' comment.id %}" class="btn btn-primary"  role="button">accept the new comment</a>
+                                {% else %}
+                                    <a href="{% url 'accept-comment' comment.id %}" class="btn btn-primary"  role="button">reAccept</a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
             {% endfor %}
         {% else %}
             <p>No comments yet.</p>

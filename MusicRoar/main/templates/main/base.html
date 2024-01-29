@@ -37,9 +37,20 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/explore">Explore</a>
                     </li>
+                    {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/my-musics">my musics</a>
+                        <a class="nav-link" href="{% url 'usersPage' %}">Users</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/my-profile">me</a>
+                    </li>
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'adminPage' %}">AdminPage</a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+
                 </ul>
             </div>
             <div>

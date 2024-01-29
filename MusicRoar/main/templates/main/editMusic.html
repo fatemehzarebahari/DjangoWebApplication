@@ -1,0 +1,12 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Edit Music{% endblock title %}
+{% load crispy_forms_tags %}
+{% block content %}
+<h3>Edit Music</h3>
+<form method="post">
+    {% csrf_token %}{{form|crispy}}
+    <button type="submit" class="btn btn-success">Save Changes</button>
+</form>
+<a href="{% url 'my-profile' %}" class="btn btn-secondary">Cancel</a>
+{% endblock content %}
