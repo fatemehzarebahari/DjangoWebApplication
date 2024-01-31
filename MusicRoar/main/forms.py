@@ -29,3 +29,7 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['text']
+        
+        
+class MusicSearchForm(forms.Form):
+    query = forms.CharField(max_length=255, required=False)
