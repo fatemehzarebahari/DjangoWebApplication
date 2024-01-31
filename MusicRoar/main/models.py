@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Music(models.Model):
     class Status(models.TextChoices):
         ACCEPTED = "accepted"
@@ -46,3 +47,12 @@ class Like(models.Model):
     music = models.ForeignKey(Music, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     isLiked = models.BooleanField()
+
+
+class Ban(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    reason = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.username} - {self.timestamp}'
