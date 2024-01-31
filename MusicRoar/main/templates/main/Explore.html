@@ -15,7 +15,10 @@
                         <h5 class="card-title">{{x.title}}</h5>
                     </div>
                 </div>
-                <div class="card-footer"><strong>{{ x.create_at }}</strong></div>
+                <div class="card-footer">
+                    <strong>created at {{ x.create_at }}</strong>
+                    <strong>views {{ x.view_count }}</strong>
+                </div>
             </div>
         </a>
     {%empty%}

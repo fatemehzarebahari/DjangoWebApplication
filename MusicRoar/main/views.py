@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404, redirect
 from .forms import RegisterForm, MusicForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from .models import Music, Like, Comment, User,Ban
+from .models import Music, Like, Comment, User,Ban, View
 
 
 # Create your views here.
@@ -32,6 +32,11 @@ def music_profile(request, musicId):
             isLiked = False
     except Like.DoesNotExist:
         isLiked = False
+        
+    view = View.objects.filter(music=music, author=request.user)
+    if not view.exists():
+        View.objects.create(music=music, author=request.user)
+    
     numberOfLikes = Like.objects.filter(music=music, isLiked=True).count()
     comment_form = CommentForm()
     context = {
@@ -41,7 +46,7 @@ def music_profile(request, musicId):
         "numberOfLikes": numberOfLikes,
         "comment_form": comment_form
     }
-    return render(request, 'main/SongProfile_.html', context)
+    return render(request, 'main/MusicProfile.html', context)
 
 
 @login_required(login_url="/login")
@@ -204,7 +209,7 @@ def adminPage(request):
     return render(request, 'main/AdminPage.html', context)
 
 
-@login_required
+@login_required(login_url="/login")
 def ban_user(request, userId):
     if request.user.is_staff:
         selected_user = get_object_or_404(User, id=userId)
@@ -216,3 +221,15 @@ def ban_user(request, userId):
 
     return redirect('userPage', userId=selected_user.id)
 
+
+def most_liked(request):
+    sortedMusics = sorted(Music.objects.filter(status=Music.Status.ACCEPTED), key=lambda x: x.like_count(), reverse=True)
+    return render(request, 'main/Explore.html', {"musics": sortedMusics})
+
+def most_commented(request):
+    sortedMusics = sorted(Music.objects.filter(status=Music.Status.ACCEPTED), key=lambda x: x.comment_count(), reverse=True)
+    return render(request, 'main/Explore.html', {"musics": sortedMusics})
+
+def most_viewed(request):
+    sortedMusics = sorted(Music.objects.filter(status=Music.Status.ACCEPTED), key=lambda x: x.view_count(), reverse=True)
+    return render(request, 'main/Explore.html', {"musics": sortedMusics})

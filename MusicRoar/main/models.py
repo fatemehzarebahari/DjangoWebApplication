@@ -18,6 +18,15 @@ class Music(models.Model):
         choices=Status.choices,
         default=Status.PENDING,
     )
+    
+    def like_count(self):
+        return self.like_set.filter(isLiked=True).count()
+    
+    def comment_count(self):
+        return self.comment_set.filter(status=Comment.Status.ACCEPTED).count()
+    
+    def view_count(self):
+        return self.view_set.all().count()
 
     def __str__(self):
         return self.title + "\n" + self.author.username + str(self.status)
@@ -39,6 +48,7 @@ class Comment(models.Model):
         default=Status.PENDING,
     )
 
+
     def __str__(self):
         return self.music.title + "\n" + self.author.username + str(self.status)
 
@@ -56,3 +66,8 @@ class Ban(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.timestamp}'
+
+
+class View(models.Model):
+    music = models.ForeignKey(Music, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
