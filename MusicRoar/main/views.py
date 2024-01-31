@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404, redirect
 from .forms import RegisterForm, MusicForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from .models import Music, Like, Comment, User
+from .models import Music, Like, Comment, User,Ban
 
 
 # Create your views here.
@@ -116,7 +116,6 @@ def like_music(request, musicId):
     return redirect('music_profile', musicId=music.id)
 
 
-
 @login_required(login_url="/login")
 def comment_music(request, musicId):
     music = Music.objects.get(id=musicId)
@@ -157,6 +156,7 @@ def decline_music(request, musicId):
     music.save()
     return redirect('userPage', userId=music.author.id)
 
+
 @login_required(login_url="/login")
 def accept_comment(request, commentId):
     comment = Comment.objects.get(id=commentId)
@@ -184,8 +184,21 @@ def adminPage(request):
     return render(request, 'main/AdminPage.html', context)
 
 
-
-@login_required(login_url="/login")
-def ban_user(request, userId):
-    user = User.objects.get(userId)
-
+# @login_required
+# def ban_user(request, username):
+#     if request.user.is_staff:
+#         user_to_ban = get_object_or_404(User, username=username)
+#
+#         if not Ban.objects.filter(user=user_to_ban).exists():
+#             Ban.objects.create(user=user_to_ban, reason='Violation of terms')
+#
+#     return redirect('some_protected_view')  # Redirect to a relevant page
+#
+#
+# @login_required
+# def unban_user(request, username):
+#     if request.user.is_staff:
+#         user_to_unban = get_object_or_404(User, username=username)
+#         Ban.objects.filter(user=user_to_unban).delete()
+#
+#     return redirect('some_protected_view')
