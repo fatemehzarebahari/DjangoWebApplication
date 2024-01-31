@@ -4,6 +4,7 @@ from .forms import RegisterForm, MusicForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from .models import History, Music, Like, Comment, User,Ban, View
+from django.core.files.base import ContentFile
 
 
 # Create your views here.
@@ -54,7 +55,7 @@ def music_profile(request, musicId):
 @login_required(login_url="/login")
 def myProfile(request):
     if request.method == "POST":
-        form = MusicForm(request.POST)
+        form = MusicForm(request.POST, request.FILES)
         if form.is_valid():
             music = form.save(commit=False)
             music.author = request.user

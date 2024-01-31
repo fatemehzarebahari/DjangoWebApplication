@@ -80,13 +80,9 @@
               <div class="row">
                 <div class="col-md-8">
                   <h5 class="card-title">{{ music.title }}</h5>
-                  {% if object.your_field %}
                     <audio controls class="mb-3">
                       <source src="{{ music.audio_file.url }}" type="audio/mpeg" />Your browser does not support the audio element.
                     </audio>
-                  {% else %}
-                    <p>no music uploaded yet</p>
-                  {% endif %}
                 </div>
                 <div class="col-md-4">
                   {% if user.is_staff %}
