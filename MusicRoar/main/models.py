@@ -8,6 +8,14 @@ class Music(models.Model):
         PENDING = "pending"
         DECLINED = "declined"
 
+    class Type(models.TextChoices):
+        POP = "Pop"
+        ROCK = "Rock"
+        FOLK = "Folk"
+        JAZZ="Jazz"
+        CLASSIC = "Classic"
+
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     audio_file = models.FileField(upload_to='audio/', null=True)
@@ -17,6 +25,12 @@ class Music(models.Model):
         max_length=8,
         choices=Status.choices,
         default=Status.PENDING,
+    )
+    type = models.CharField(
+        max_length=10,
+        choices=Type.choices,
+        default=Type.POP,
+        null=False
     )
     
     def like_count(self):
