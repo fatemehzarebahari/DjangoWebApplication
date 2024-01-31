@@ -55,3 +55,6 @@ class DeleteGenreForm(forms.ModelForm):
         required=False,
         empty_label="Select a genre"
     )
+
+class MusicSearchForm(forms.Form):
+    query = forms.CharField(max_length=255, required=False)
