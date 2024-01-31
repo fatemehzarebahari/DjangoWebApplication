@@ -1,64 +1,62 @@
 {% extends 'main/base.html' %}
 
-
-{% block title %}My Profile{% endblock title %}
+{% block title %}
+  My Profile
+{% endblock %}
 
 {% load crispy_forms_tags %}
 
 {% block content %}
-
-<h2>New Musics:</h2>
-{% if musics %}
+  <h2>New Musics:</h2>
+  {% if musics %}
     <div class="row">
-        {% for music in musics %}
-            <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <h5 class="card-title">{{ music.title }} uploaded by <a href="{% url 'userPage' music.author.id%}" class="link-offset-2 link-underline link-underline-opacity-0">{{music.author.username}}</a></h5>
-                        <div class="d-flex flex-row justify-content-between">
-                            <audio controls class="mb-2">
-                                <source src="{{ music.audio_file.url }}" type="audio/mpeg">
-                                Your browser does not support the audio element.
-                            </audio>
-                            <div>
-                                <a href="{% url 'accept-music' music.id %}" class="btn btn-primary"  role="button">accept</a>
-                            </div>
-                        </div>
-                    </div>
+      {% for music in musics %}
+        <div class="col-md-4 mb-4">
+          <div class="card">
+            <h5 class="card-title">{{ music.title }} uploaded by <a href="{% url 'userPage' music.author.id %}" class="link-offset-2 link-underline link-underline-opacity-0">{{ music.author.username }}</a></h5>
+            <div class="d-flex flex-row justify-content-between">
+              {% if object.your_field %}
+                <audio controls class="mb-2">
+                  <source src="{{ music.audio_file.url }}" type="audio/mpeg" />Your browser does not support the audio element.
+                </audio>
+              {% else %}
+                <p>no music file uplaoded</p>
+              {% endif %}
+              <div>
+                <a href="{% url 'accept-music' music.id %}" class="btn btn-primary" role="button">accept</a>
+              </div>
             </div>
-        {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
     </div>
-{% else %}
+  {% else %}
     <p>recently No musics have been uploaded...</p>
-{% endif %}
+  {% endif %}
 
-
-<h2>New Comments:</h2>
-{% if comments %}
+  <h2>New Comments:</h2>
+  {% if comments %}
     <div class="row">
-        {% for comment in comments %}
-            <div class="col-md-4 mb-4">
-                <h5 class="card-title"> comment on
-                    <a href="{% url 'music_profile' comment.music.id%}" class="link-offset-2 link-underline link-underline-opacity-0">{{ comment.music.title }}</a>
-                    by
-                    <a href="{% url 'userPage' comment.author.id%}" class="link-offset-2 link-underline link-underline-opacity-0">
-                        {{comment.author.username}}
-                    </a>
-                </h5>
-                    <div class="card">
-                        <div class="d-flex flex-row justify-content-between">
-                            {{ comment.text }}
-                            <div>
-                                <a href="{% url 'accept-comment' comment.id %}" class="btn btn-primary"  role="button">accept</a>
-                            </div>
-                        </div>
-                    </div>
+      {% for comment in comments %}
+        <div class="col-md-4 mb-4">
+          <h5 class="card-title">
+            comment on
+            <a href="{% url 'music_profile' comment.music.id %}" class="link-offset-2 link-underline link-underline-opacity-0">{{ comment.music.title }}</a>
+            by
+            <a href="{% url 'userPage' comment.author.id %}" class="link-offset-2 link-underline link-underline-opacity-0">{{ comment.author.username }}</a>
+          </h5>
+          <div class="card">
+            <div class="d-flex flex-row justify-content-between">
+              {{ comment.text }}
+              <div>
+                <a href="{% url 'accept-comment' comment.id %}" class="btn btn-primary" role="button">accept</a>
+              </div>
             </div>
-        {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
     </div>
-{% else %}
+  {% else %}
     <p>recently No comments have been uploaded...</p>
-{% endif %}
-
-{% endblock content %}
-    
-    
+  {% endif %}
+{% endblock %}

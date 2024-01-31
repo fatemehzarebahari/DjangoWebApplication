@@ -1,96 +1,96 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
+{% block title %}
+  Music Profile
+{% endblock %}
 
-{% block title %}Music Profile{% endblock title %}
+{% block styleSheets %}<link rel="stylesheet" href="{% static 'css/style.css' %}">{% endblock styleSheets %}
 
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container mt-4">
-
+  <div class="container mt-4">
     <div class="mt-3">
-        {% if music.status != "accepted" %}
-        <h3 class="text-danger">status:{{music.status}}</h3>
-        {% endif %}
-        {% if user.is_staff %}
-        <a href="{% url 'decline-music' music.id %}"  class="btn btn-primary"  role="button"> Ban Music</a>
-        {% endif %}
-        <br><br>
+      {% if music.status != 'accepted' %}
+        <h3 class="text-danger">status:{{ music.status }}</h3>
+      {% endif %}
+      {% if user.is_staff %}
+        <a href="{% url 'decline-music' music.id %}" class="btn btn-primary" role="button">Ban Music</a>
+      {% endif %}
+      <br /><br />
     </div>
 
     <!-- audio section -->
     <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">{{ music.title }}</h5>
-            <audio controls class="mb-3">
-                <source src="{{ music.audio_file.url }}" type="audio/mpeg">
-                Your browser does not support the audio element.
-            </audio>
-            <p class="card-text">Last updated: {{ music.updated_at }}</p>
-           {% if isLiked %}
-                <div class="d-flex align-items-center">
-                    <a href="{% url 'like_music' music.id %}" class="btn btn-link">
-                        <img src="{% static 'filledHeart.jpg' %}" alt="Undo Like" style="width: 30px">
-                    </a><br>
-                    <p class="card-text small ms-2 mb-0">{{ numberOfLikes }}</p>
-                </div>
-           {% else %}
-                <div class="d-flex align-items-center">
-                    <a href="{% url 'like_music' music.id %}" class="btn btn-link">
-                        <img src="{% static 'emptyHeart.jpg' %}" alt="Like" style="width: 30px">
-                    </a><br>
-                    <p class="card-text small ms-2 mb-0">{{ numberOfLikes }}</p>
-                </div>
-           {% endif %}
-        </div>
+      <div class="card-body">
+        <h5 class="card-title">{{ music.title }}</h5>
+        {% if object.your_field %}
+          <audio controls class="mb-3">
+            <source src="{{ music.audio_file.url }}" type="audio/mpeg" />Your browser does not support the audio element.
+          </audio>
+        {% else %}
+          <p>no music file uploaded</p>
+        {% endif %}
+        <p class="card-text">Last updated: {{ music.updated_at }}</p>
+        {% if isLiked %}
+          <div class="d-flex align-items-center">
+            <a href="{% url 'like_music' music.id %}" class="btn btn-link"><img src="{% static 'filledHeart.jpg' %}" alt="Undo Like" style="width: 30px" /></a><br />
+            <p class="card-text small ms-2 mb-0">{{ numberOfLikes }}</p>
+          </div>
+        {% else %}
+          <div class="d-flex align-items-center">
+            <a href="{% url 'like_music' music.id %}" class="btn btn-link"><img src="{% static 'emptyHeart.jpg' %}" alt="Like" style="width: 30px" /></a><br />
+            <p class="card-text small ms-2 mb-0">{{ numberOfLikes }}</p>
+          </div>
+        {% endif %}
+      </div>
     </div>
 
     <!-- Comments section -->
-    <form method="post" class="text-light" action="{% url 'comment_music' music.id %}">
-        {% csrf_token %}{{ comment_form|crispy }}
-        <input type="submit" name="add_comment" value="Add Comment" class="button button-primary">
+    <form >
+      {% csrf_token %}{{ comment_form|crispy }}
+      <input type="submit" name="add_comment" value="Add Comment" class="button button-primary" />
     </form>
 
     <div class="mt-4">
-        <h5>Comments</h5>
-        {% if comments.count > 0 %}
-            {% for comment in comments %}
-                {% if comment.status == "accepted"%}
-                    <div class="card mt-2">
-                        <div class="card-body">
-                            <p class="card-text">{{ comment.text }}</p>
-                            <small class="text-muted">Posted by {{ comment.author.username }} on {{ comment.create_at }}</small>
-                            {% if user.is_staff %}
-                                <a href="{% url 'decline-comment' comment.id %}" class="btn btn-primary"  role="button">Ban Comment</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% else %}
-                    {% if user.is_staff or comment.author == user%}
-                        <div class="card mt-2">
-                            <div class="card-body">
-                                <p class="card-text">{{ comment.text }}</p>
-                                <small class="text-muted">Posted by {{ comment.author.username }} on {{ comment.create_at }}</small>
-                            <div class="card-footer text-danger"><strong>{{ comment.status }}</strong></div>
-                            {% if user.is_staff %}
-                                {% if comment.status == "pending" %}
-                                    <a href="{% url 'accept-comment' comment.id %}" class="btn btn-primary"  role="button">accept the new comment</a>
-                                {% else %}
-                                    <a href="{% url 'accept-comment' comment.id %}" class="btn btn-primary"  role="button">reAccept</a>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                        </div>
-                    {% endif %}
+      <h5>Comments</h5>
+      {% if comments.count > 0 %}
+        {% for comment in comments %}
+          {% if comment.status == 'accepted' %}
+            <div class="card mt-2">
+              <div class="card-body">
+                <p class="card-text">{{ comment.text }}</p>
+                <small class="text-muted">Posted by {{ comment.author.username }} on {{ comment.create_at }}</small>
+                {% if user.is_staff %}
+                  <a href="{% url 'decline-comment' comment.id %}" class="btn btn-primary" role="button">Ban Comment</a>
                 {% endif %}
-            {% endfor %}
-        {% else %}
-            <p>No comments yet.</p>
-        {% endif %}
+              </div>
+            </div>
+          {% else %}
+            {% if user.is_staff or comment.author == user %}
+              <div class="card mt-2">
+                <div class="card-body">
+                  <p class="card-text">{{ comment.text }}</p>
+                  <small class="text-muted">Posted by {{ comment.author.username }} on {{ comment.create_at }}</small>
+                  <div class="card-footer text-danger">
+                    <strong>{{ comment.status }}</strong>
+                  </div>
+                  {% if user.is_staff %}
+                    {% if comment.status == 'pending' %}
+                      <a href="{% url 'accept-comment' comment.id %}" class="btn btn-primary" role="button">accept the new comment</a>
+                    {% else %}
+                      <a href="{% url 'accept-comment' comment.id %}" class="btn btn-primary" role="button">reAccept</a>
+                    {% endif %}
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <p>No comments yet.</p>
+      {% endif %}
     </div>
-
-</div>
-{% endblock content %}
-    
-    
+  </div>
+{% endblock %}

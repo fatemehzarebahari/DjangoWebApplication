@@ -1,0 +1,31 @@
+.image {
+    flex: 1;
+    padding-left: 140px;
+    padding-top: 30px;
+    /* Image takes up half of the container */
+}
+
+.image img {
+    max-width: 20%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    width: 80%;
+}
+
+#header_section {
+    width: 100%;
+    /* Set the width of the parent container */
+    height: 450px;
+    /* Set the height of the parent container */
+    background-image: url('assets/gramaphon.jpg');
+    /* Replace with the path to your image */
+    background-size: cover;
+    /* Cover the entire container with the background image */
+    background-position: center;
+    /* Center the background image */
+    color: #fff;
+    /* Set text color to be visible on top of the image */
+}
