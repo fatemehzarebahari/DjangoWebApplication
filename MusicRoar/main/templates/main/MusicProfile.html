@@ -48,7 +48,7 @@
     </div>
 
     <!-- Comments section -->
-    <form >
+    <form method="post" class="text-light" action="{% url 'comment_music' music.id %} ">
       {% csrf_token %}{{ comment_form|crispy }}
       <input type="submit" name="add_comment" value="Add Comment" class="button button-primary" />
     </form>

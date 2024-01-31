@@ -23,23 +23,23 @@
   <div class="carousel-inner">
 
     <div class="carousel-item active">
-      <img src="{% static 'slide1.jpg' %}" alt="slide 1" class="d-block" style="width:100%;height: 650px">
+      <a href="{% url 'most-viewed' %}"><img src="{% static 'slide1.jpg' %}" alt="slide 1" class="d-block" style="width:100%;height: 650px"></a>
       <div class="carousel-caption">
-        <h3>Slide1</h3>
+        <h3>Most Views</h3>
         <p>Slide1 stuff!</p>
       </div>
     </div>
     <div class="carousel-item">
-      <img src="{% static 'slide2.jpg' %}" alt="slide 2" class="d-block" style="width:100%;height: 650px">
+      <a href="{% url 'most-liked' %}"><img src="{% static 'slide2.jpg' %}" alt="slide 2" class="d-block" style="width:100%;height: 650px"></a>
       <div class="carousel-caption">
-        <h3>Slide2</h3>
+        <h3>Most Likes</h3>
         <p>Slide2 stuff!</p>
       </div>
     </div>
     <div class="carousel-item">
-      <img src="{% static 'slide3.jpg' %}" alt="slide 3" class="d-block" style="width:100%;height: 650px">
+      <a href="{% url 'most-commented' %}"><img src="{% static 'slide3.jpg' %}" alt="slide 3" class="d-block" style="width:100%;height: 650px"></a>
       <div class="carousel-caption">
-        <h3>slide3</h3>
+        <h3>Most Comments</h3>
         <p>slide3 stuff!</p>
       </div>
     </div>

@@ -19,4 +19,7 @@ urlpatterns = [
     path('accept-comment/<int:commentId>', views.accept_comment, name='accept-comment'),
     path('adminPage', views.adminPage, name='adminPage'),
     path('edit-music/<int:musicId>/', views.edit_music, name='edit_music'),
+    path('most-liked', views.most_liked, name='most-liked'),
+    path('most-commented', views.most_commented, name='most-commented'),
+    path('most-viewed', views.most_viewed, name='most-viewed'),
 ]
