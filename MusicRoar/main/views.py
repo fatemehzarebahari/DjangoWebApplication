@@ -41,7 +41,7 @@ def music_profile(request, musicId):
         "numberOfLikes": numberOfLikes,
         "comment_form": comment_form
     }
-    return render(request, 'main/MusicProfile.html', context)
+    return render(request, 'main/SongProfile_.html', context)
 
 
 @login_required(login_url="/login")
@@ -53,7 +53,7 @@ def myProfile(request):
             music.author = request.user
             music.likes = 0
             music.save()
-            return redirect('/home')
+            return redirect('/my-profile')
     else:
         form = MusicForm()
     musics = Music.objects.filter(author=request.user)
