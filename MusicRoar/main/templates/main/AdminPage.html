@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 
 
-{% block title %}My Profile{% endblock title %}
+{% block title %}Admin Profile{% endblock title %}
 
 {% load crispy_forms_tags %}
 
@@ -57,6 +57,21 @@
     </div>
 {% else %}
     <p>recently No comments have been uploaded...</p>
+{% endif %}
+
+<h2>Banned Users:</h2>
+{% if banned_users %}
+    <div class="row">
+        {% for x in banned_users %}
+            <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <h5 class="card-body"><a href="{% url 'userPage' x.user.id %}" class="link-offset-2 link-underline link-underline-opacity-0">{{ x.user.username }}</a></h5>
+                    </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>no user is banned...</p>
 {% endif %}
 
 {% endblock content %}

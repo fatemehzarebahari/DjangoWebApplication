@@ -18,5 +18,5 @@ urlpatterns = [
     path('decline-comment/<int:commentId>', views.decline_comment, name='decline-comment'),
     path('accept-comment/<int:commentId>', views.accept_comment, name='accept-comment'),
     path('adminPage', views.adminPage, name='adminPage'),
-    path('edit-music/<int:musicId>/', views.edit_music, name='edit_music'),
+    path('ban-user/<int:userId>/', views.ban_user, name='ban-user')
 ]

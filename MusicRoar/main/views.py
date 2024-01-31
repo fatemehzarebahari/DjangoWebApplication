@@ -13,7 +13,10 @@ def home(request):
 
 @login_required(login_url='/login')
 def explore(request):
-    musics = Music.objects.filter(status=Music.Status.ACCEPTED)
+    banned_users = Ban.objects.values('user')
+    musics = Music.objects.filter(
+        status=Music.Status.ACCEPTED
+    ).exclude(author__id__in=banned_users)
     return render(request, 'main/Explore.html', {"musics": musics})
 
 
@@ -56,9 +59,11 @@ def myProfile(request):
     musics = Music.objects.filter(author=request.user)
     return render(request, 'main/myProfile.html', {"form": form, "musics":musics})
 
+
 @login_required(login_url="/login")
 def usersPage(request):
-    users = User.objects.all()
+    banned_users = Ban.objects.values('user')
+    users = User.objects.exclude(id__in=banned_users)
     return render(request, 'main/UsersPage.html', {"users": users})
 
 
@@ -69,7 +74,18 @@ def userPage(request, userId):
         musics = Music.objects.filter(author=selectedUser)
     else:
         musics = Music.objects.filter(author=selectedUser, status=Music.Status.ACCEPTED)
-    return render(request, 'main/UserPage.html', {"selectedUser": selectedUser, "musics": musics})
+    try:
+        ban_instance = Ban.objects.get(user=selectedUser)
+        is_banned = True
+    except Ban.DoesNotExist:
+        is_banned = False
+    print(is_banned)
+    context = {
+    "selectedUser": selectedUser,
+    "musics": musics,
+    "is_banned": is_banned
+    }
+    return render(request, 'main/UserPage.html', context)
 
 
 @login_required(login_url="/login")
@@ -88,6 +104,7 @@ def edit_music(request, musicId):
         form = MusicForm(instance=music)
 
     return render(request, 'main/editMusic.html', {'form': form, 'music': music})
+
 
 @login_required(login_url='/login')
 def delete_music(request,musicId):
@@ -177,28 +194,25 @@ def decline_comment(request, commentId):
 def adminPage(request):
     comments = Comment.objects.filter(status=Comment.Status.PENDING)
     musics = Music.objects.filter(status=Music.Status.PENDING)
+    banned_users = Ban.objects.all()
+
     context = {
         "comments": comments,
-        "musics": musics
+        "musics": musics,
+        "banned_users": banned_users
     }
     return render(request, 'main/AdminPage.html', context)
 
 
-# @login_required
-# def ban_user(request, username):
-#     if request.user.is_staff:
-#         user_to_ban = get_object_or_404(User, username=username)
-#
-#         if not Ban.objects.filter(user=user_to_ban).exists():
-#             Ban.objects.create(user=user_to_ban, reason='Violation of terms')
-#
-#     return redirect('some_protected_view')  # Redirect to a relevant page
-#
-#
-# @login_required
-# def unban_user(request, username):
-#     if request.user.is_staff:
-#         user_to_unban = get_object_or_404(User, username=username)
-#         Ban.objects.filter(user=user_to_unban).delete()
-#
-#     return redirect('some_protected_view')
+@login_required
+def ban_user(request, userId):
+    if request.user.is_staff:
+        selected_user = get_object_or_404(User, id=userId)
+
+        if not Ban.objects.filter(user=selected_user).exists():
+            Ban.objects.create(user=selected_user, reason='Violation of terms')
+        else:
+            Ban.objects.get(user=selected_user).delete()
+
+    return redirect('userPage', userId=selected_user.id)
+

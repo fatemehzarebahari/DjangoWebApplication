@@ -12,12 +12,61 @@
         <h3 >{{ selectedUser.username }}</h3>
 <!--        how to Ban user................. ? -->
         {% if user.is_staff %}
-            <a href="#" class="btn btn-primary"  role="button">Ban User</a>
+            {% if is_banned %}
+                <a href="{% url 'ban-user' selectedUser.id %}" class="btn btn-primary"  role="button">UnBan User</a>
+            {% else %}
+                <a href="{% url 'ban-user' selectedUser.id %}" class="btn btn-primary"  role="button">Ban User</a>
+            {% endif %}
         {% endif %}
     </div>
 
-    <!-- Musics section -->
-    <div class="mt-4">
+    {% if is_banned%}
+        {% if user.is_staff %}
+            <h2> The  page is banned, uploaded content:</h2>
+            <div class="mt-4">
+            {% if musics.count > 0 %}
+            <h5>Musics</h5>
+            {% for music in musics %}
+            <a href="{% url 'music_profile' music.id%}" class="link-offset-2 link-underline link-underline-opacity-0">
+                    <div class="card-body bg-light text-dark">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5 class="card-title">{{ music.title }}</h5>
+                                <audio controls class="mb-3">
+                                    <source src="{{ music.audio_file.url }}" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            </div>
+                            <div class="col-md-4">
+                                {% if user.is_staff %}
+                                    {% if music.status == "accepted" %}
+                                        <a href="{% url 'decline-music' music.id %}" class="btn btn-primary"  role="button">Ban</a>
+                                    {% elif music.status == "pending" %}
+                                        <a href="{% url 'accept-music' music.id %}" class="btn btn-primary"  role="button">accept the new music</a>
+                                    {% else %}
+                                        <a href="{% url 'accept-music' music.id %}" class="btn btn-primary"  role="button">reAccept</a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if music.author == user or user.is_staff %}
+                                <p>music status: {{ music.status }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                <br>
+            </a>
+            {% endfor %}
+            {% else %}
+            <p> no music for this user yet...</p>
+            {% endif %}
+        </div>
+        {% else %}
+            <h2>This Page Was Banned By Admin</h2>
+        {% endif %}
+    {% else %}
+        <!-- Musics section -->
+        <div class="mt-4">
         {% if musics.count > 0 %}
         <h5>Musics</h5>
         {% for music in musics %}
@@ -55,7 +104,7 @@
         <p> no music for this user yet...</p>
         {% endif %}
     </div>
-
+    {% endif %}
 
 </div>
 {% endblock content %}
