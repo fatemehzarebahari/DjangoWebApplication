@@ -1,11 +1,12 @@
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404, redirect
-from .forms import RegisterForm, MusicForm, CommentForm
+from .forms import RegisterForm, MusicForm, CommentForm, MusicSearchForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from .models import History, Music, Like, Comment, User,Ban, View
 from django.core.files.base import ContentFile
-
+from django.shortcuts import render
+from django.db.models import Q
 
 # Create your views here.
 def home(request):
@@ -14,11 +15,26 @@ def home(request):
 
 @login_required(login_url='/login')
 def explore(request):
+    form = MusicSearchForm(request.GET)
+    
     banned_users = Ban.objects.values('user')
     musics = Music.objects.filter(
         status=Music.Status.ACCEPTED
     ).exclude(author__id__in=banned_users)
-    return render(request, 'main/Explore.html', {"musics": musics})
+    
+    searchItem = request.GET.get('search-area') or ""
+    if searchItem:
+        musics = musics.filter(
+            Q(title__icontains=searchItem) | Q(author__username__icontains=searchItem)
+        )
+    
+        
+    content = {
+        "musics": musics,
+        'searchItem': searchItem
+    }
+
+    return render(request, 'main/Explore.html', content)
 
 
 @login_required(login_url='/login')
@@ -245,3 +261,8 @@ def most_commented(request):
 def most_viewed(request):
     sortedMusics = sorted(Music.objects.filter(status=Music.Status.ACCEPTED), key=lambda x: x.view_count(), reverse=True)
     return render(request, 'main/Explore.html', {"musics": sortedMusics})
+
+
+def music_search(request):
+    
+    return render(request, 'music_search_results.html', {'results': results, 'query': query})
