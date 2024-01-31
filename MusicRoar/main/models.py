@@ -27,7 +27,7 @@ class Music(models.Model):
     
     def view_count(self):
         return self.view_set.all().count()
-
+    
     def __str__(self):
         return self.title + "\n" + self.author.username + str(self.status)
 
@@ -71,3 +71,23 @@ class Ban(models.Model):
 class View(models.Model):
     music = models.ForeignKey(Music, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    
+class History(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    music = models.ForeignKey(Music, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    class action(models.TextChoices):
+        LIKE = "like"
+        COMMENT = "comment"
+        VIEW = "view"
+        UPLOAD = "upload"
+        
+    action = models.CharField(
+        max_length=8,
+        choices=action.choices,
+        default=action.VIEW,
+    )
+    
+    def __str__(self):
+        return f'{self.user.username} - {self.action} - {self.music.title} - {self.timestamp.strftime("%d/%m/%Y %H:%M")}'

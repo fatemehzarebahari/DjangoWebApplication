@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404, redirect
 from .forms import RegisterForm, MusicForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from .models import Music, Like, Comment, User,Ban, View
+from .models import History, Music, Like, Comment, User,Ban, View
 
 
 # Create your views here.
@@ -36,6 +36,8 @@ def music_profile(request, musicId):
     view = View.objects.filter(music=music, author=request.user)
     if not view.exists():
         View.objects.create(music=music, author=request.user)
+        
+    History.objects.create(music=music, user=request.user, action="viewed")
     
     numberOfLikes = Like.objects.filter(music=music, isLiked=True).count()
     comment_form = CommentForm()
@@ -85,10 +87,14 @@ def userPage(request, userId):
     except Ban.DoesNotExist:
         is_banned = False
     print(is_banned)
+    
+    histories = selectedUser.history_set.all().order_by('-timestamp')
+    
     context = {
     "selectedUser": selectedUser,
     "musics": musics,
-    "is_banned": is_banned
+    "is_banned": is_banned,
+    "histories": histories
     }
     return render(request, 'main/UserPage.html', context)
 
@@ -135,6 +141,9 @@ def like_music(request, musicId):
     except Like.DoesNotExist:
         like = Like(music=music, author=request.user, isLiked=True)
         like.save()
+        
+    History.objects.create(music=music, user=request.user, action="liked")
+    
     return redirect('music_profile', musicId=music.id)
 
 
@@ -147,6 +156,8 @@ def comment_music(request, musicId):
         comment.music = music
         comment.author = request.user
         comment.save()
+        History.objects.create(music=music, user=request.user, action="commented")
+        
     return redirect('music_profile', musicId=music.id)
 
 
