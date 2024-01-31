@@ -64,7 +64,7 @@ def music_profile(request, musicId):
         "numberOfLikes": numberOfLikes,
         "comment_form": comment_form
     }
-    return render(request, 'main/MusicProfile.html', context)
+    return render(request, 'main/SongProfile_.html', context)
 
 
 @login_required(login_url="/login")
@@ -293,4 +293,13 @@ def genre_detail(request, genreId):
         status=Music.Status.ACCEPTED,
         genre=genre
     ).exclude(author__id__in=banned_users)
-    return render(request, 'main/Explore.html', {"musics": musics})
+    searchItem = request.GET.get('search-area') or ""
+    if searchItem:
+        musics = musics.filter(
+            Q(title__icontains=searchItem) | Q(author__username__icontains=searchItem)
+        )
+    content = {
+        "musics": musics,
+        'searchItem': searchItem
+    }
+    return render(request, 'main/Explore.html', content)
