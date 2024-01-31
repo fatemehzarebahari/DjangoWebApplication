@@ -22,4 +22,7 @@ urlpatterns = [
     path('most-liked', views.most_liked, name='most-liked'),
     path('most-commented', views.most_commented, name='most-commented'),
     path('most-viewed', views.most_viewed, name='most-viewed'),
+    path('add-genre', views.add_genre, name="add-genre"),
+    path('delete-genre/', views.delete_genre, name="delete-genre"),
+    path('genre_detail/<int:genreId>', views.genre_detail, name="genre_detail")
 ]

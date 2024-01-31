@@ -1,15 +1,16 @@
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404, redirect
-from .forms import RegisterForm, MusicForm, CommentForm
+from .forms import RegisterForm, MusicForm, CommentForm, GenreForm, DeleteGenreForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from .models import History, Music, Like, Comment, User,Ban, View
+from .models import History, Music, Like, Comment, User,Ban, View, Genre
 from django.core.files.base import ContentFile
 
 
 # Create your views here.
 def home(request):
-    return render(request, 'main/Home.html')
+    genres = Genre.objects.all()
+    return render(request, 'main/Home.html', {"genres": genres})
 
 
 @login_required(login_url='/login')
@@ -104,14 +105,14 @@ def userPage(request, userId):
 def edit_music(request, musicId):
     music = get_object_or_404(Music, id=musicId)
 
-    if request.user != music.author:
+    if request.user != music.author and not request.user.is_staff:
         return HttpResponseForbidden("You don't have permission to edit this music.")
 
     if request.method == "POST":
         form = MusicForm(request.POST, instance=music)
         if form.is_valid():
             form.save()
-            return redirect('my-profile')
+            return redirect('explore')
     else:
         form = MusicForm(instance=music)
 
@@ -212,11 +213,14 @@ def adminPage(request):
     comments = Comment.objects.filter(status=Comment.Status.PENDING)
     musics = Music.objects.filter(status=Music.Status.PENDING)
     banned_users = Ban.objects.all()
-
+    form = GenreForm()
+    delete_genre_form = DeleteGenreForm()
     context = {
         "comments": comments,
         "musics": musics,
-        "banned_users": banned_users
+        "banned_users": banned_users,
+        "genre_form": form,
+        "delete_genre_form": delete_genre_form
     }
     return render(request, 'main/AdminPage.html', context)
 
@@ -245,3 +249,34 @@ def most_commented(request):
 def most_viewed(request):
     sortedMusics = sorted(Music.objects.filter(status=Music.Status.ACCEPTED), key=lambda x: x.view_count(), reverse=True)
     return render(request, 'main/Explore.html', {"musics": sortedMusics})
+
+
+@login_required(login_url="/login")
+def add_genre(request):
+    if request.method == 'POST':
+        form = GenreForm(request.POST)
+        if form.is_valid():
+            form.save()
+    return redirect('adminPage')
+
+
+@login_required(login_url="/login")
+def delete_genre(request):
+    if request.method == 'POST':
+        form = DeleteGenreForm(request.POST)
+        if form.is_valid():
+            genre = form.cleaned_data['genre']
+            if genre:
+                genre.delete()
+    return redirect('adminPage')
+
+
+@login_required(login_url="/login")
+def genre_detail(request, genreId):
+    banned_users = Ban.objects.values('user')
+    genre = get_object_or_404(Genre, id=genreId)
+    musics = Music.objects.filter(
+        status=Music.Status.ACCEPTED,
+        genre=genre
+    ).exclude(author__id__in=banned_users)
+    return render(request, 'main/Explore.html', {"musics": musics})

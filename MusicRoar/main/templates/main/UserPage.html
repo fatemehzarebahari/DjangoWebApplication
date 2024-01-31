@@ -93,6 +93,7 @@
                     {% else %}
                       <a href="{% url 'accept-music' music.id %}" class="btn btn-primary" role="button">reAccept</a>
                     {% endif %}
+                      <a href="{% url 'edit_music' music.id %}" class="btn btn-primary" role="button">Edit</a>
                   {% endif %}
                   {% if music.author == user or user.is_staff %}
                     <p>music status: {{ music.status }}</p>

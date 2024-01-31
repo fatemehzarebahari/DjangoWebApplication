@@ -74,6 +74,21 @@
     <p>no user is banned...</p>
 {% endif %}
 
+
+
+<h2>Add Genre</h2>
+  <form method="post" action="{% url 'add-genre' %}">
+    {% csrf_token %}
+    {{ genre_form.as_p }}
+    <button type="submit">Add Genre</button>
+  </form>
+
+  <h2>Delete Genre</h2>
+  <form method="post" action="{% url 'delete-genre' %}">
+    {% csrf_token %}
+    {{ delete_genre_form.as_p }}
+    <button type="submit">Delete</button>
+  </form>
 {% endblock content %}
     
     

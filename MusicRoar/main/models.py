@@ -1,20 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Genre(models.Model):
+    name = models.CharField(max_length=20, unique=True)
 
+    def __str__(self):
+        return self.name
 class Music(models.Model):
     class Status(models.TextChoices):
         ACCEPTED = "accepted"
         PENDING = "pending"
         DECLINED = "declined"
-
-    class Type(models.TextChoices):
-        POP = "Pop"
-        ROCK = "Rock"
-        FOLK = "Folk"
-        JAZZ="Jazz"
-        CLASSIC = "Classic"
-
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
@@ -26,12 +22,7 @@ class Music(models.Model):
         choices=Status.choices,
         default=Status.PENDING,
     )
-    type = models.CharField(
-        max_length=10,
-        choices=Type.choices,
-        default=Type.POP,
-        null=False
-    )
+    genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, null=True)
     
     def like_count(self):
         return self.like_set.filter(isLiked=True).count()
