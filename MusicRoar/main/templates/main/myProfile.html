@@ -1,46 +1,85 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}
   My Profile
 {% endblock %}
-
+{% block styleSheets %}
+  <!-- CSS styleSheets -->
+  <link rel="stylesheet" href="{% static 'css/song_profile.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/progressbar.css' %}" />
+{% endblock %}
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <div>
-    <h3>upload new music</h3>
-    <form method="post" class="text-light" enctype="multipart/form-data">
-      {% csrf_token %}{{ form|crispy }}
-      <button type="submit" class="button button-success">Upload</button>
-    </form>
-  </div>
+<div class="container-fluid my-5 border mt-0" style="background-color: rgb(221, 215, 215);">
 
-  {% if musics %}
-    <h2>Your Musics</h2>
-    <div class="row">
-      {% for music in musics %}
-        <div class="col-md-4 mb-4">
-          <a href="{% url 'music_profile' music.id %}" class="link-offset-2 link-underline link-underline-opacity-0">
-            <div class="card">
-              <h5 class="card-title">{{ music.title }}</h5>
-              <div class="d-flex flex-row justify-content-between">
-                  <audio controls class="mb-2">
-                    <source src="{{ music.audio_file.url }}" type="audio/mpeg" />Your browser does not support the audio element.
-                  </audio>
-                <div>
-                  <form method="post" action="{% url 'delete_music' music.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">DELETE</button>
-                  </form>
-                  <a href="{% url 'edit_music' music.id %}" class="btn btn-warning">Edit</a>
-                </div>
-              </div>
-            </div>
-          </a>
+
+  <div class="container-fluid p-5 my-5 border" style="background-color: white;">
+      <div class="container-fluid border">
+        <div class="row" style="padding-top: 10px;">
+          <div class="col-md-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+            </svg>
+          </div>
+
+          <div class="col-md-3">
+            <p>Upload new music</p>
+          </div>
+
+          <div class="col-md-8"></div>
         </div>
-      {% endfor %}
+      </div>
+
+      <form method="post" class="text-light" enctype="multipart/form-data">
+        {% csrf_token %}{{ form|crispy }}
+        <button type="submit" class="btn btn-success">Upload</button>
+      </form>
+
     </div>
-  {% else %}
-    <p>No musics uploaded yet...</p>
-  {% endif %}
+
+  <div class="mt-4">
+            {% if musics.count > 0 %}
+            {% for music in musics %}
+                <div class="card-body bg-light text-dark">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <a href="{% url 'music_profile' music.id%}" class="link-offset-2 link-underline link-underline-opacity-0" style="color:black">
+                                <h3 class="card-title" style="color: #ed687c;">{{ music.title }}</h3>
+                                </a><br>
+                                {% if object.your_field %}
+                                      <audio controls class="mb-3">
+                                            <source src="{{ music.audio_file.url }}" type="audio/mpeg" />Your browser does not support the audio element.
+                                     </audio>
+                                {% else %}
+                                  <p>no music file uploaded</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                              <div class="row">
+                                <div class="col">
+                                    <form method="post" action="{% url 'delete_music' music.id %}">
+                                      {% csrf_token %}
+                                      <button type="submit" class="btn btn-danger">DELETE</button>
+                                    </form>
+                                </div>
+                                <div class="col">
+                                  <a href="{% url 'edit_music' music.id %}" class="btn btn-warning">Edit</a>
+                                </div>
+                                </div>
+                            </div>
+
+                            {% if music.author == user or user.is_staff %}
+                                <i>music status: {{ music.status }}</i>
+                            {% endif %}
+                        </div>
+                    </div><br>
+            {% endfor %}
+            {% else %}
+              <p> no music uploaded yet...</p>
+            {% endif %}
+        </div>
+
+</div>
 {% endblock %}

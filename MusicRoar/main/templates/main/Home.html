@@ -7,90 +7,52 @@
 {% block content %}
 {% load static %}
 
-
-<div class="container pt-5">
-<!-- Carousel -->
-<div id="slideShow" class="carousel slide" data-bs-ride="carousel">
-
-  <!-- Indicators/dots -->
-  <div class="carousel-indicators">
-    <button type="button" data-bs-target="#slideShow" data-bs-slide-to="0" class="active"></button>
-    <button type="button" data-bs-target="#slideShow" data-bs-slide-to="1"></button>
-    <button type="button" data-bs-target="#slideShow" data-bs-slide-to="2"></button>
-  </div>
-
-  <!-- The slideshow/carousel -->
-  <div class="carousel-inner">
-
-    <div class="carousel-item active">
-      <a href="{% url 'most-viewed' %}"><img src="{% static 'slide1.jpg' %}" alt="slide 1" class="d-block" style="width:100%;height: 650px"></a>
-      <div class="carousel-caption">
-        <h3>Most Views</h3>
-        <p>Slide1 stuff!</p>
-      </div>
+<div class="container my-5 mt-5" >
+    <div class="row">
+        <div class="col-md-12 mx-auto"> <!-- Adjust the column size as needed -->
+            <!-- Carousel -->
+            <div id="slideShow" class="carousel slide" data-bs-ride="carousel">
+                <!-- Indicators/dots -->
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#slideShow" data-bs-slide-to="0" class="active"></button>
+                    <button type="button" data-bs-target="#slideShow" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#slideShow" data-bs-slide-to="2"></button>
+                </div>
+                <!-- The slideshow/carousel -->
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <a href="{% url 'most-viewed' %}"><img src="{% static 'slide1.jpg' %}" alt="slide 1" class="d-block" style="width:100%;height: 650px"></a>
+                        <div class="carousel-caption">
+                            <h3>Most Views</h3>
+                            <p>Slide1 stuff!</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="{% url 'most-liked' %}"><img src="{% static 'slide2.jpg' %}" alt="slide 2" class="d-block" style="width:100%;height: 650px"></a>
+                        <div class="carousel-caption">
+                            <h3>Most Likes</h3>
+                            <p>Slide2 stuff!</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <a href="{% url 'most-commented' %}"><img src="{% static 'slide3.jpg' %}" alt="slide 3" class="d-block" style="width:100%;height: 650px"></a>
+                        <div class="carousel-caption">
+                            <h3>Most Comments</h3>
+                            <p>slide3 stuff!</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Left and right controls/icons -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#slideShow" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#slideShow" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+        </div>
     </div>
-    <div class="carousel-item">
-      <a href="{% url 'most-liked' %}"><img src="{% static 'slide2.jpg' %}" alt="slide 2" class="d-block" style="width:100%;height: 650px"></a>
-      <div class="carousel-caption">
-        <h3>Most Likes</h3>
-        <p>Slide2 stuff!</p>
-      </div>
-    </div>
-    <div class="carousel-item">
-      <a href="{% url 'most-commented' %}"><img src="{% static 'slide3.jpg' %}" alt="slide 3" class="d-block" style="width:100%;height: 650px"></a>
-      <div class="carousel-caption">
-        <h3>Most Comments</h3>
-        <p>slide3 stuff!</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Left and right controls/icons -->
-  <button class="carousel-control-prev" type="button" data-bs-target="#slideShow" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon"></span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#slideShow" data-bs-slide="next">
-    <span class="carousel-control-next-icon"></span>
-  </button>
 </div>
-
-</div>
-
-<div class="container pt-5">
-  {% if genres %}
-    <h2>Genres:</h2>
-    <div class="dropdown">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="genreDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Select a Genre
-      </button>
-      <div class="dropdown-menu" aria-labelledby="genreDropdown">
-        {% for genre in genres %}
-          <a class="dropdown-item" href="{% url 'genre_detail' genre.id %}">{{ genre.name }}</a>
-        {% endfor %}
-      </div>
-    </div>
-  {% endif %}
-</div>
-
-
-{% if not user.is_authenticated %}
-<div class="container mt-3">
-  <div class="text-center">
-    <br>
-    <h2 class="text-warning"> why not joining up now?</h2>
-    <br>
-  </div>
-  <div class="text-center">
-  <a class="btn btn-warning btn-lg" href="/login" role="button" style="width: 250px">Login</a><br><br>
-  <span class="fs-9 text-warning">already have an account? </span>
-  <a class="btn btn-warning btn-sm" href="/sign-up" role="button">Sign In</a>
-
-
-  </div>
-
-</div>
-{% endif %}
-
 
 {% endblock content %}
 

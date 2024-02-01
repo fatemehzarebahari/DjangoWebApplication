@@ -6,36 +6,60 @@
 {% endblock %}
 
 {% block content %}
-  <div>
-    <form method="GET" action="{% url 'explore'%}">
-        <input type='text' name='search-area' placeholder="Search" value="{{searchItem}}">
-        <input class="button" type="submit" value='Search'>
-    </form>
-  </div>
+  <div class="container-fluid my-5 border mt-0" style="background-color: rgb(221, 215, 215);">
+
+<div class="row mt-2">
+    <div class="col-md-6">
+        <form method="GET" action="{% url 'explore'%}" class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Search..." name='search-area' aria-describedby="basic-addon2" value="{{searchItem}}">
+            <div class="input-group-append">
+                <button class="btn" style="background-color: #687CED;" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div class="ml-auto">
+            {% if genres %}
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="genreDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Select a Genre
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="genreDropdown">
+                        {% for genre in genres %}
+                            <a class="dropdown-item" href="{% url 'explore' %}?genre-area={{ genre.name }}">{{ genre.name }}</a>
+                        {% endfor %}
+                        <a class="dropdown-item" href="{% url 'explore'%}?genre-area=clear ">None</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 
   {% if musics %}
     {% for x in musics %}
-      <a href="{% url 'music_profile' x.id %}" class="link-offset-2 link-underline link-underline-opacity-0">
         <div class="card mt-2">
           <div class="card-header">
-            <strong>@{{ x.author.username }}</strong>
+            <a href="{% url 'userPage' x.author.id %}" class="link-offset-2 link-underline link-underline-opacity-0">
+              <strong style="color: #687CED;">@{{ x.author.username }}</strong>
+            </a>
           </div>
           <div class="card-body d-flex flex-row justify-content-between">
             <div>
-              <h5 class="card-title">{{ x.title }}</h5>
+              <a href="{% url 'music_profile' x.id %}" class="link-offset-2 link-underline link-underline-opacity-0">
+                  <h5 class="card-title" style="color: black;"><strong>{{ x.title }}</strong></h5>
+              </a>
             </div>
           </div>
           <div class="card-footer">
-            <strong>created at {{ x.create_at }}</strong>
-            <strong>views {{ x.view_count }}</strong>
+            <i>created at {{ x.create_at }}</i>
+            <i>views {{ x.view_count }}</i>
           </div>
         </div>
-      </a>
-
       {% empty %}
       <p>No posts yet :(</p>
 
     {% endfor %}
   {% endif %}
-
+  </div>
 {% endblock %}

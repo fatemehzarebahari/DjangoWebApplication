@@ -1,92 +1,164 @@
 {% extends 'main/base.html' %}
 {% load static %}
-
 {% block title %}
   Music Profile
 {% endblock %}
 
-{% block styleSheets %}<link rel="stylesheet" href="{% static 'css/style.css' %}">{% endblock styleSheets %}
-
-{% load crispy_forms_tags %}
+{% block styleSheets %}
+  <!-- CSS styleSheets -->
+  <link rel="stylesheet" href="{% static 'css/song_profile.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/progressbar.css' %}" />
+{% endblock %}
 
 {% block content %}
-  <div class="container mt-4">
+
+  <div class="container-fluid my-5 border mt-0" style="background-color: rgb(221, 215, 215);">
+    <div class="container mt-4">
     <div class="mt-3">
       {% if music.status != 'accepted' %}
-        <h3 class="text-danger">status:{{ music.status }}</h3>
+        <h3 style="color: #333;">STATUS: {{ music.status }}</h3>
+        {% if user.is_staff %}
+          <a href="{% url 'accept-music' music.id %}" role="button" class="btn"  style="background-color: #687CED;">UnBan Music</a>
+        {% endif %}
+      {% else %}
+          {% if user.is_staff %}
+            <a href="{% url 'decline-music' music.id %}"  role="button" class="btn"  style="background-color: #687CED;">Ban Music</a>
+          {% endif %}
       {% endif %}
-      {% if user.is_staff %}
-        <a href="{% url 'decline-music' music.id %}" class="btn btn-primary" role="button">Ban Music</a>
-      {% endif %}
+
       <br /><br />
     </div>
 
-    <!-- audio section -->
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">{{ music.title }}</h5>
-          <audio controls class="mb-3">
-            <source src="{{ music.audio_file.url }}" type="audio/mpeg" />Your browser does not support the audio element.
-          </audio>
-        <p class="card-text">Last updated: {{ music.updated_at }}</p>
-        {% if isLiked %}
+    <div class="container-fluid p-5 my-5" id="header_section" style="background-color: #ed687c;">
+      <h1>{{ music.title }}</h1>
+      <h5>by {{ music.author.username }}</h5>
+      <img src="{% static 'gramaphon2.jpeg' %}" alt="song pic" class="img-fluid" />
+
+      {% if isLiked %}
           <div class="d-flex align-items-center">
-            <a href="{% url 'like_music' music.id %}" class="btn btn-link"><img src="{% static 'filledHeart.jpg' %}" alt="Undo Like" style="width: 30px" /></a><br />
+            <a href="{% url 'like_music' music.id %}" class="btn btn-link">
+              <img src="{% static 'filledHeart.png' %}" alt="Undo Like" style="width: 30px" /></a><br />
             <p class="card-text small ms-2 mb-0">{{ numberOfLikes }}</p>
           </div>
         {% else %}
           <div class="d-flex align-items-center">
-            <a href="{% url 'like_music' music.id %}" class="btn btn-link"><img src="{% static 'emptyHeart.jpg' %}" alt="Like" style="width: 30px" /></a><br />
+            <a href="{% url 'like_music' music.id %}" class="btn btn-link">
+              <img src="{% static 'emptyHeart.png' %}" alt="Like" style="width: 30px" /></a>
             <p class="card-text small ms-2 mb-0">{{ numberOfLikes }}</p>
           </div>
         {% endif %}
-      </div>
     </div>
 
-    <!-- Comments section -->
-    <form method="post" class="text-light" action="{% url 'comment_music' music.id %} ">
-      {% csrf_token %}{{ comment_form|crispy }}
-      <input type="submit" name="add_comment" value="Add Comment" class="button button-primary" />
-    </form>
 
-    <div class="mt-4">
-      <h5>Comments</h5>
-      {% if comments.count > 0 %}
-        {% for comment in comments %}
-          {% if comment.status == 'accepted' %}
-            <div class="card mt-2">
-              <div class="card-body">
-                <p class="card-text">{{ comment.text }}</p>
-                <small class="text-muted">Posted by {{ comment.author.username }} on {{ comment.create_at }}</small>
-                {% if user.is_staff %}
-                  <a href="{% url 'decline-comment' comment.id %}" class="btn btn-primary" role="button">Ban Comment</a>
-                {% endif %}
-              </div>
-            </div>
-          {% else %}
-            {% if user.is_staff or comment.author == user %}
-              <div class="card mt-2">
-                <div class="card-body">
-                  <p class="card-text">{{ comment.text }}</p>
-                  <small class="text-muted">Posted by {{ comment.author.username }} on {{ comment.create_at }}</small>
-                  <div class="card-footer text-danger">
-                    <strong>{{ comment.status }}</strong>
-                  </div>
-                  {% if user.is_staff %}
-                    {% if comment.status == 'pending' %}
-                      <a href="{% url 'accept-comment' comment.id %}" class="btn btn-primary" role="button">accept the new comment</a>
-                    {% else %}
-                      <a href="{% url 'accept-comment' comment.id %}" class="btn btn-primary" role="button">reAccept</a>
-                    {% endif %}
-                  {% endif %}
+
+    <!-- audio section-->
+    <div class="container-fluid p-5 pt-0 my-5 border" style="background-color: rgb(255, 255, 255);">
+        <br /><br />
+
+        <div class="row">
+          <div class="col-md-1">
+            <form>
+              <button type="button" class="btn play-button" onclick="toggleAudio()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-play-circle" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                  <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445" />
+                </svg>
+              </button>
+            </form>
+          </div>
+          <div class="col-md-10">
+            <div id="custom-audio">
+              <div id="audio-progress" class="progress" onclick="seekAudio(event)">
+                <div class="progress-bar" style="width: 65%; background: #ed687c;">
+                  <span class="progress-icon fa fa-check" style="border-color:#ed687c; color:#ed687c;"></span>
+                  <div class="progress-value">65%</div>
                 </div>
               </div>
-            {% endif %}
-          {% endif %}
-        {% endfor %}
-      {% else %}
-        <p>No comments yet.</p>
-      {% endif %}
+              <audio id="audio-player" src="{{ music.audio_file.url }}"></audio>
+            </div>
+            <!-- End of custom audio player -->
+          </div>
+          <div class="col-md-1" style="padding-bottom: 3px;">
+            <p id="audio-timer">0:00</p>
+          </div>
+        </div>
+      </div>
+    <!-- end audio section-->
+
+    <!-- Add comment section -->
+    <div class="container-fluid p-5 my-5 border" style="background-color: rgb(255, 255, 255);">
+      <div class="container-fluid border">
+        <div class="row" style="padding-top: 10px;">
+          <div class="col-md-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+            </svg>
+          </div>
+
+          <div class="col-md-3">
+            <p>Add a comment</p>
+          </div>
+
+          <div class="col-md-8"></div>
+        </div>
+      </div>
+
+      <form method="post" action="{% url 'comment_music' music.id %}" style="margin-top: 5px;">
+        {% csrf_token %}
+        <!-- last id = comment-->
+        <textarea class="form-control" rows="5" id="{{ comment_form.text.id_for_label }}" name="{{ comment_form.text.name }}" style="margin-bottom: 5px;">{{ comment_form.text.value }}</textarea>
+
+        <input type="submit" name="add_comment" value="Submit" class="btn"  style="background-color: #ed687c;" />
+      </form>
     </div>
+
+    <!-- end Add comment section -->
+
+    <!-- comments -->
+    <div class="container-fluid p-5 my-5 border" style="background-color: rgb(255, 255, 255);">
+      <h5>Comments</h5>
+      <hr />
+
+      <div class="container-fluid border" style="padding-top: 20px;">
+        {% if comments.count > 0 %}
+          {% for comment in comments %}
+            {% if comment.status == 'accepted' %}
+              <p style="font-size: 20px;">{{ comment.text }}</p>
+              <p style="text-decoration: underline;">{{ comment.author.username }} {{ comment.create_at }}</p>
+              {% if user.is_staff %}
+                <a href="{% url 'decline-comment' comment.id %}" class="btn" role="button" style="background-color: #687CED;">Ban Comment</a>
+              {% endif %}
+            {% else %}
+              {% if user.is_staff or comment.author == user %}
+                <div class="card mt-2">
+                  <div class="card-body">
+                    <p class="card-text">{{ comment.text }}</p>
+                    <small class="text-muted">Posted by {{ comment.author.username }} on {{ comment.create_at }}</small>
+                    <div class="card-footer text-danger">
+                      <strong>{{ comment.status }}</strong>
+                    </div>
+                    {% if user.is_staff %}
+                      {% if comment.status == 'pending' %}
+                        <a href="{% url 'accept-comment' comment.id %}" class="btn" role="button" style="background-color: #687CED;">accept the new comment</a>
+                      {% else %}
+                        <a href="{% url 'accept-comment' comment.id %}" class="btn" role="button" style="background-color: #687CED;">reAccept</a>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+            {% endif %}
+            <hr style="border-color: black;" />
+          {% endfor %}
+        {% else %}
+          <p>No comments yet.</p>
+        {% endif %}
+        
+      </div>
+    </div>
+    <!-- end comments -->
   </div>
+  </div>
+  <script type="text/javascript" src="{% static 'js/custom_audio_player.js' %}"></script>
+
 {% endblock %}

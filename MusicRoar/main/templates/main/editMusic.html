@@ -3,10 +3,32 @@
 {% block title %}Edit Music{% endblock title %}
 {% load crispy_forms_tags %}
 {% block content %}
-<h3>Edit Music</h3>
-<form method="post">
-    {% csrf_token %}{{form|crispy}}
-    <button type="submit" class="btn btn-success">Save Changes</button>
-</form>
-<a href="{% url 'my-profile' %}" class="btn btn-secondary">Cancel</a>
+<div class="container-fluid my-5 border mt-0" style="background-color: rgb(221, 215, 215);">
+
+  <div class="container-fluid p-5 my-5 border" style="background-color: white;">
+    <div class="container-fluid border">
+      <div class="row" style="padding-top: 10px;">
+        <div class="col-md-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+          </svg>
+        </div>
+
+        <div class="col-md-3">
+          <p>Edit Music</p>
+        </div>
+
+        <div class="col-md-8"></div>
+      </div>
+    </div>
+    <div class="container-fluid">
+        <br>
+        <form method="post">
+            {% csrf_token %}{{form|crispy}}
+            <button type="submit" class="btn btn-success" style="min-width: 120px">Save Changes</button>
+        </form><br>
+        <a href="{% url 'my-profile' %}" class="btn btn-secondary" style="min-width: 120px">Cancel</a>
+    </div>
+  </div>
+</div>
 {% endblock content %}

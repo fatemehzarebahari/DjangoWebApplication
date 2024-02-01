@@ -10,8 +10,7 @@ from django.db.models import Q
 
 # Create your views here.
 def home(request):
-    genres = Genre.objects.all()
-    return render(request, 'main/Home.html', {"genres": genres})
+    return render(request, 'main/Home.html')
 
 
 @login_required(login_url='/login')
@@ -28,10 +27,20 @@ def explore(request):
         musics = musics.filter(
             Q(title__icontains=searchItem) | Q(author__username__icontains=searchItem)
         )
-
+    genreItem = request.GET.get('genre-area') or ""
+    if genreItem == "clear":
+        musics = musics.all()
+    else:
+        if genreItem:
+            musics = musics.filter(
+                Q(Q(genre__name__icontains=genreItem))
+            )
+    genres = Genre.objects.all()
     content = {
         "musics": musics,
-        'searchItem': searchItem
+        'searchItem': searchItem,
+        'genreItem': genreItem,
+        "genres": genres
     }
 
     return render(request, 'main/Explore.html', content)
@@ -64,7 +73,7 @@ def music_profile(request, musicId):
         "numberOfLikes": numberOfLikes,
         "comment_form": comment_form
     }
-    return render(request, 'main/SongProfile_.html', context)
+    return render(request, 'main/MusicProfile.html', context)
 
 
 @login_required(login_url="/login")
@@ -285,21 +294,21 @@ def delete_genre(request):
     return redirect('adminPage')
 
 
-@login_required(login_url="/login")
-def genre_detail(request, genreId):
-    banned_users = Ban.objects.values('user')
-    genre = get_object_or_404(Genre, id=genreId)
-    musics = Music.objects.filter(
-        status=Music.Status.ACCEPTED,
-        genre=genre
-    ).exclude(author__id__in=banned_users)
-    searchItem = request.GET.get('search-area') or ""
-    if searchItem:
-        musics = musics.filter(
-            Q(title__icontains=searchItem) | Q(author__username__icontains=searchItem)
-        )
-    content = {
-        "musics": musics,
-        'searchItem': searchItem
-    }
-    return render(request, 'main/Explore.html', content)
+# @login_required(login_url="/login")
+# def genre_detail(request, genreId):
+#     banned_users = Ban.objects.values('user')
+#     genre = get_object_or_404(Genre, id=genreId)
+#     musics = Music.objects.filter(
+#         status=Music.Status.ACCEPTED,
+#         genre=genre
+#     ).exclude(author__id__in=banned_users)
+#     searchItem = request.GET.get('search-area') or ""
+#     if searchItem:
+#         musics = musics.filter(
+#             Q(title__icontains=searchItem) | Q(author__username__icontains=searchItem)
+#         )
+#     content = {
+#         "musics": musics,
+#         'searchItem': searchItem
+#     }
+#     return render(request, 'main/Explore.html', content)
