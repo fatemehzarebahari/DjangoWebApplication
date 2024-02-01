@@ -263,15 +263,18 @@ def ban_user(request, userId):
 
 def most_liked(request):
     sortedMusics = sorted(Music.objects.filter(status=Music.Status.ACCEPTED), key=lambda x: x.like_count(), reverse=True)
-    return render(request, 'main/Explore.html', {"musics": sortedMusics})
+    genres = Genre.objects.all()
+    return render(request, 'main/Explore.html', {"musics": sortedMusics,"genres": genres})
 
 def most_commented(request):
     sortedMusics = sorted(Music.objects.filter(status=Music.Status.ACCEPTED), key=lambda x: x.comment_count(), reverse=True)
-    return render(request, 'main/Explore.html', {"musics": sortedMusics})
+    genres = Genre.objects.all()
+    return render(request, 'main/Explore.html', {"musics": sortedMusics,"genres":genres})
 
 def most_viewed(request):
     sortedMusics = sorted(Music.objects.filter(status=Music.Status.ACCEPTED), key=lambda x: x.view_count(), reverse=True)
-    return render(request, 'main/Explore.html', {"musics": sortedMusics})
+    genres = Genre.objects.all()
+    return render(request, 'main/Explore.html', {"musics": sortedMusics,"genres": genres})
 
 
 @login_required(login_url="/login")
@@ -293,22 +296,3 @@ def delete_genre(request):
                 genre.delete()
     return redirect('adminPage')
 
-
-# @login_required(login_url="/login")
-# def genre_detail(request, genreId):
-#     banned_users = Ban.objects.values('user')
-#     genre = get_object_or_404(Genre, id=genreId)
-#     musics = Music.objects.filter(
-#         status=Music.Status.ACCEPTED,
-#         genre=genre
-#     ).exclude(author__id__in=banned_users)
-#     searchItem = request.GET.get('search-area') or ""
-#     if searchItem:
-#         musics = musics.filter(
-#             Q(title__icontains=searchItem) | Q(author__username__icontains=searchItem)
-#         )
-#     content = {
-#         "musics": musics,
-#         'searchItem': searchItem
-#     }
-#     return render(request, 'main/Explore.html', content)
