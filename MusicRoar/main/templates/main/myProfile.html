@@ -44,24 +44,26 @@
             {% for music in musics %}
                 <div class="card-body bg-light text-dark">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-sm-10">
                                 <a href="{% url 'music_profile' music.id%}" class="link-offset-2 link-underline link-underline-opacity-0" style="color:black">
-                                <h3 class="card-title" style="color: #ed687c;">{{ music.title }}</h3>
-                                </a><br>
-                                {% if object.your_field %}
-                                      <audio controls class="mb-3">
-                                            <source src="{{ music.audio_file.url }}" type="audio/mpeg" />Your browser does not support the audio element.
-                                     </audio>
-                                {% else %}
-                                  <p>no music file uploaded</p>
-                                {% endif %}
+                                <h3 class="card-title" style="color: #2A2F4F;">{{ music.title }}</h3>
+                                </a>
+                                      <audio controls class="mb-2">
+                                        <source src="{{ music.audio_file.url }}" type="audio/mpeg" />
+                                        Your browser does not support the audio element.
+                                      </audio>
+<!--                                {% if object.your_field %}-->
+<!--                                {% else %}-->
+<!--                                  <p>no music file uploaded</p>-->
+<!--                                {% endif %}-->
                             </div>
-                            <div class="col-md-4">
+
+                            <div class="col-sm-2">
                               <div class="row">
                                 <div class="col">
                                     <form method="post" action="{% url 'delete_music' music.id %}">
                                       {% csrf_token %}
-                                      <button type="submit" class="btn btn-danger">DELETE</button>
+                                      <button type="submit" class="btn btn-danger">Delete</button>
                                     </form>
                                 </div>
                                 <div class="col">
@@ -69,7 +71,6 @@
                                 </div>
                                 </div>
                             </div>
-
                             {% if music.author == user or user.is_staff %}
                                 <i>music status: {{ music.status }}</i>
                             {% endif %}

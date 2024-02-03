@@ -1,11 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Genre(models.Model):
     name = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
         return self.name
+
+
 class Music(models.Model):
     class Status(models.TextChoices):
         ACCEPTED = "accepted"
@@ -23,16 +26,16 @@ class Music(models.Model):
         default=Status.PENDING,
     )
     genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, null=True)
-    
+
     def like_count(self):
         return self.like_set.filter(isLiked=True).count()
-    
+
     def comment_count(self):
         return self.comment_set.filter(status=Comment.Status.ACCEPTED).count()
-    
+
     def view_count(self):
         return self.view_set.all().count()
-    
+
     def __str__(self):
         return self.title + "\n" + self.author.username + str(self.status)
 

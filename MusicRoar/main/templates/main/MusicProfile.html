@@ -12,26 +12,30 @@
 
 {% block content %}
 
-  <div class="container-fluid my-5 border mt-0" style="background-color: rgb(221, 215, 215);">
+  <div class="container-fluid my-5 border mt-0" style="background-color: rgb(221, 215, 215); ">
     <div class="container mt-4">
     <div class="mt-3">
       {% if music.status != 'accepted' %}
         <h3 style="color: #333;">STATUS: {{ music.status }}</h3>
         {% if user.is_staff %}
-          <a href="{% url 'accept-music' music.id %}" role="button" class="btn"  style="background-color: #687CED;">UnBan Music</a>
+          <a href="{% url 'accept-music' music.id %}" role="button" class="btn btn-warning" >UnBan Music</a>
         {% endif %}
       {% else %}
           {% if user.is_staff %}
-            <a href="{% url 'decline-music' music.id %}"  role="button" class="btn"  style="background-color: #687CED;">Ban Music</a>
+            <a href="{% url 'decline-music' music.id %}"  role="button" class="btn btn-danger">Ban Music</a>
           {% endif %}
       {% endif %}
 
       <br /><br />
     </div>
 
-    <div class="container-fluid p-5 my-5" id="header_section" style="background-color: #ed687c;">
+    <div class="container-fluid p-5 my-5" id="header_section" style="background-color: #FDE2F3; color:#2A2F4F;">
       <h1>{{ music.title }}</h1>
-      <h5>by {{ music.author.username }}</h5>
+      <h5>
+      <a href="{% url 'userPage' music.author.id %}" class="link-offset-2 link-underline link-underline-opacity-0" style="color: #2A2F4F;">
+        by {{ music.author.username }}
+      </a>
+      </h5>
       <img src="{% static 'gramaphon2.jpeg' %}" alt="song pic" class="img-fluid" />
 
       {% if isLiked %}
@@ -108,7 +112,7 @@
         <!-- last id = comment-->
         <textarea class="form-control" rows="5" id="{{ comment_form.text.id_for_label }}" name="{{ comment_form.text.name }}" style="margin-bottom: 5px;">{{ comment_form.text.value }}</textarea>
 
-        <input type="submit" name="add_comment" value="Submit" class="btn"  style="background-color: #ed687c;" />
+        <input type="submit" name="add_comment" value="Submit" class="btn btn-success" />
       </form>
     </div>
 
@@ -126,7 +130,7 @@
               <p style="font-size: 20px;">{{ comment.text }}</p>
               <p style="text-decoration: underline;">{{ comment.author.username }} {{ comment.create_at }}</p>
               {% if user.is_staff %}
-                <a href="{% url 'decline-comment' comment.id %}" class="btn" role="button" style="background-color: #687CED;">Ban Comment</a>
+                <a href="{% url 'decline-comment' comment.id %}" class="btn btn-danger" role="button">Ban Comment</a>
               {% endif %}
             {% else %}
               {% if user.is_staff or comment.author == user %}
@@ -139,9 +143,9 @@
                     </div>
                     {% if user.is_staff %}
                       {% if comment.status == 'pending' %}
-                        <a href="{% url 'accept-comment' comment.id %}" class="btn" role="button" style="background-color: #687CED;">accept the new comment</a>
+                        <a href="{% url 'accept-comment' comment.id %}" class="btn btn-success" role="button " >accept the new comment</a>
                       {% else %}
-                        <a href="{% url 'accept-comment' comment.id %}" class="btn" role="button" style="background-color: #687CED;">reAccept</a>
+                        <a href="{% url 'accept-comment' comment.id %}" class="btn btn-success" role="button" >reAccept</a>
                       {% endif %}
                     {% endif %}
                   </div>

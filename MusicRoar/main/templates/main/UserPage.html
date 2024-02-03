@@ -13,13 +13,13 @@
 
 {% block content %}
   <div class="container-fluid my-5 border mt-0" style="background-color: rgb(221, 215, 215);">
-      <div class="container-fluid p-5 my-5" id="header_section" style="background-color: #ed687c; color:white ; height: 200px">
-            <h3 >{{ selectedUser.username }}</h3><br>
+      <div class="container-fluid p-5 my-5" id="header_section" style="background-color: #FDE2F3; color:#2A2F4F ; height: 200px">
+            <h3>{{ selectedUser.username }}</h3><br>
             {% if user.is_staff %}
                 {% if is_banned %}
-                    <a href="{% url 'ban-user' selectedUser.id %}" class="btn"  style="background-color: #687CED;"  role="button">UnBan User</a>
+                    <a href="{% url 'ban-user' selectedUser.id %}" class="btn btn-warning"   role="button">UnBan User</a>
                 {% else %}
-                    <a href="{% url 'ban-user' selectedUser.id %}" class="btn"  style="background-color: #687CED;" role="button">Ban User</a>
+                    <a href="{% url 'ban-user' selectedUser.id %}" class="btn btn-danger"   role="button">Ban User</a>
                 {% endif %}
             {% endif %}
       </div>
@@ -29,7 +29,9 @@
         {% if not user.is_staff %}
             <h2>This Page Was Banned By Admin</h2>
         {% endif %}
-    {% elif not is_banned or user.is_staff %}
+    {% endif %}
+
+    {% if user.is_staff or not is_bannedv%}
         <!-- Musics section -->
         <div class="mt-4">
             {% if musics.count > 0 %}
@@ -38,24 +40,25 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <a href="{% url 'music_profile' music.id%}" class="link-offset-2 link-underline link-underline-opacity-0" style="color:black">
-                                <h3 class="card-title" style="color: #ed687c;">{{ music.title }}</h3>
+                                <h3 class="card-title" style="color: #2A2F4F;">{{ music.title }}</h3>
                                 </a><br>
-                                {% if object.your_field %}
-                                      <audio controls class="mb-3">
+                                      <audio controls class="mb-2">
                                             <source src="{{ music.audio_file.url }}" type="audio/mpeg" />Your browser does not support the audio element.
                                      </audio>
-                                {% else %}
-                                  <p>no music file uploaded</p>
-                                {% endif %}
+<!--                                {% if object.your_field %}-->
+
+<!--                                {% else %}-->
+<!--                                  <p>no music file uploaded</p>-->
+<!--                                {% endif %}-->
                             </div>
                             <div class="col-md-4">
                                 {% if user.is_staff %}
                                     {% if music.status == "accepted" %}
-                                        <a href="{% url 'decline-music' music.id %}" class="btn " style="background-color: #687CED; min-width: 100px"  role="button">Ban</a>
+                                        <a href="{% url 'decline-music' music.id %}" class="btn btn-danger" style="min-width: 100px"  role="button">Ban</a>
                                     {% elif music.status == "pending" %}
-                                        <a href="{% url 'accept-music' music.id %}" class="btn " style="background-color: #687CED;"  role="button">accept the new music</a>
+                                        <a href="{% url 'accept-music' music.id %}" class="btn btn-success"   role="button">accept the new music</a>
                                     {% else %}
-                                        <a href="{% url 'accept-music' music.id %}" class="btn " style="background-color: #687CED;"  role="button">reAccept</a>
+                                        <a href="{% url 'accept-music' music.id %}" class="btn btn-warning"  role="button">reAccept</a>
                                     {% endif %}
                                 {% endif %}
                             </div>
