@@ -1,25 +1,24 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-
-{% block title %}Explore{% endblock title %}
-
+{% block title %}
+  Explore
+{% endblock %}
 
 {% block content %}
-    {%for x in users %}
-        <a href="{% url 'userPage' x.id%}" class="link-offset-2 link-underline link-underline-opacity-0">
-            <div class="card mt-2">
-                <div class="card-body ">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <h3>@{{ x.username }}</h3>
-                        </div>
-                    </div>
+  <div class="container-fluid" style="padding-top: 20px; background-color:  rgb(221, 215, 215); height: 100%;">
+    {% for x in users %}
+      <a href="{% url 'userPage' x.id %}" class="link-offset-2 link-underline link-underline-opacity-0" style="color: #2A2F4F;">
+        <div class="container-fluid p-3 my-2 border" style="background-color: rgb(255, 255, 255);">
+            <div class="row">
+                <div class="col-md-8">
+                  <h3>{{ x.username }}</h3>
                 </div>
             </div>
-        </a>
-    {%empty%}
+        </div>
+      </a>
+    {% empty %}
         <p>No users yet :(</p>
     {% endfor %}
-{% endblock content %}
-
+  </div>
+{% endblock %}

@@ -245,7 +245,7 @@ def adminPage(request):
         "genre_form": form,
         "delete_genre_form": delete_genre_form
     }
-    return render(request, 'main/AdminPage.html', context)
+    return render(request, 'main/adminPage_.html', context)
 
 
 @login_required(login_url="/login")

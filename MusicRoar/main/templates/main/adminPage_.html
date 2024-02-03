@@ -1,0 +1,103 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+  Admin Profile
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="container-fluid my-5 border mt-0" style="background-color: rgb(221, 215, 215);">
+    <div class="container-fluid p-5 my-5 border" style="background-color: rgb(255, 255, 255);">
+      <h5>New Songs</h5>
+      <hr />
+      {% if musics %}
+        {% for music in musics %}
+          <div class="container-fluid p-2 my-2 border" style="background-color: rgb(255, 255, 255);">
+            <div class="row">
+              <div class="col-2">
+                <p style="margin-top: 5px; margin-left: 5px;">
+                  {{ music.title }} by <a href="{% url 'userPage' music.author.id %}" class="link-offset-2 link-underline link-underline-opacity-0" style="color: #2A2F4F;">{{ music.author.username }}</a>
+                </p>
+              </div>
+              <div class="col-9"></div>
+              <div class="col-1">
+                <a href="{% url 'accept-music' music.id %}" class="btn btn-success" role="button">Accept</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>recently No musics have been uploaded...</p>
+      {% endif %}
+    </div>
+
+    <div class="container-fluid p-5 my-5 border" style="background-color: rgb(255, 255, 255);">
+      <h5>New Comments</h5>
+      <hr />
+      {% if comments %}
+        {% for comment in comments %}
+          <div class="container-fluid p-2 my-2 border" style="background-color: rgb(255, 255, 255);">
+            <h5>
+              comment on
+              <a href="{% url 'music_profile' comment.music.id %}" class="link-offset-2 link-underline link-underline-opacity-0" style="color: #2A2F4F;">{{ comment.music.title }}</a>
+              by
+              <a href="{% url 'userPage' comment.author.id %}" class="link-offset-2 link-underline link-underline-opacity-0" style="color: #2A2F4F;">{{ comment.author.username }}</a>
+            </h5>
+            <hr />
+            <div class="row">
+              <div class="col-2">
+                <p style="margin-top: 5px; margin-left: 5px;">{{ comment.text }}</p>
+              </div>
+              <div class="col-8"></div>
+              <div class="col-2">
+                <a href="{% url 'accept-comment' comment.id %}" class="btn btn-success" role="button">Accept</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>recently No comments have been uploaded...</p>
+      {% endif %}
+    </div>
+
+    <div class="container-fluid p-5 my-5 border" style="background-color: rgb(255, 255, 255);">
+      <h5>Banned Users</h5>
+      <hr />
+      {% if banned_users %}
+        {% for user in banned_users %}
+          <div class="container-fluid p-2 my-2 border" style="background-color: rgb(255, 255, 255);">
+            <h5><a href="{% url 'userPage' user.user.id %}" class="link-offset-2 link-underline link-underline-opacity-0" style="color: #2A2F4F;">{{ user.user.username }}</a></h5>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>no user is banned...</p>
+      {% endif %}
+    </div>
+
+    <div class="container-fluid p-5 my-5 border" style="background-color: rgb(255, 255, 255);">
+      <h5>Add New Genre</h5>
+      <hr />
+      <form method="post" action="{% url 'add-genre' %}">
+        {% csrf_token %}
+        <input type="text" class="form-control" name="{{ genre_form.name.name }}" id="{{ genre_form.name.id_for_label }}" value="{{genre_form.name.value }}" placeholder="Enter genre name">
+
+        <button type="button" class="btn btn-success" style="margin-top: 10px;">Add</button>
+      </form>
+    </div>
+
+    <div class="container-fluid p-5 my-5 border" style="background-color: rgb(255, 255, 255);">
+      <h5>Delete Genre</h5>
+      <hr />
+      <form method="post" action="{% url 'delete-genre' %}">
+        {% csrf_token %}
+        <select class="form-select mt-3" name="{{ delete_genre_form.name.name }}" id="{{ delete_genre_form.name.id_for_label }}" class="custom-select">>
+          {% for choice in delete_genre_form.name %}
+            <option value="{{ choice.value }}">{{ choice.label }}</option>
+          {% endfor %}
+        </select>
+        <button type="button" class="btn btn-danger" style="margin-top: 10px;">Delete</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
