@@ -6,11 +6,23 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<div class="container p-5 my-5 border">
     <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            {{ field|as_crispy_field }}
+        {% endfor %}
+        <p>Have an account? <a href="/login">Login</a></p>
+        <button type="submit" class="btn btn-success">Register</button>
+    </form>
+    {% comment %} <form method="post">
         {% csrf_token %}{{form}}
         <p>Have an account? <a href="/login">Login</a></p>
-        <button type="submit" class="button button-success">Register</button>
-    </form>
+        <button type="submit" class="btn btn-success">Register</button>
+    </form> {% endcomment %}
+</div>
+
+    
 {% endblock content %}
     
     
